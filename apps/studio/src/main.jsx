@@ -77,7 +77,7 @@ function App() {
     <main className="studio-shell">
       <header className="topbar">
         <div className="brand" aria-label="KinetiCanvas Studio">
-          <span className="brand-mark"><i /><i /><i /></span>
+          <img className="brand-mark" src="/favicon.svg" alt="Ember, the dragon builder" />
           <span>Kineti<span>Canvas</span></span>
         </div>
         <div className="project-meta">
