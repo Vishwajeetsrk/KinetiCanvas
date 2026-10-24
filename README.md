@@ -128,6 +128,8 @@ Run the current studio shell:
 pnpm --filter @kineticanvas/studio dev
 ```
 
+Follow the [interactive demo guide](docs/STUDIO_DEMO.md) to select characters, change motions, add task cues and keyframes, toggle a demo audio track, and download the local editable project state.
+
 Verify the portable project model and the production studio build:
 
 ```bash
@@ -148,6 +150,10 @@ Once the application scaffold is added, contributors will need:
 - FFmpeg for full local video export verification.
 
 The desktop scaffold and installers are not in this repository yet. The browser studio above is the current runnable surface.
+
+## Releases and installers
+
+There are currently **no published GitHub Releases** because KinetiCanvas does not yet produce verified Windows, macOS, or Linux installers. A release will be created only after the desktop application, local MCP server, CLI, and platform installation tests are complete. See the [studio demo guide](docs/STUDIO_DEMO.md#release-and-installer-rule) for the planned release contents.
 
 ## Agent integration example
 

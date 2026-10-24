@@ -49,6 +49,9 @@ function App() {
   const [selectedId, setSelectedId] = useState("olli");
   const [selectedMotion, setSelectedMotion] = useState("Work");
   const [selectedCue, setSelectedCue] = useState("analytics");
+  const [activeCue, setActiveCue] = useState("analytics");
+  const [hasAudio, setHasAudio] = useState(true);
+  const [keyframes, setKeyframes] = useState([0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playhead, setPlayhead] = useState(0);
   const [toast, setToast] = useState("");
@@ -73,6 +76,38 @@ function App() {
     setToast(message);
   }
 
+  function addCue() {
+    setActiveCue(selectedCue);
+    notify(`${selectedCue} cue added to this scene.`);
+  }
+
+  function addKeyframe() {
+    const keyframe = Number(playhead.toFixed(1));
+    setKeyframes((current) => current.includes(keyframe) ? current : [...current, keyframe].sort((a, b) => a - b));
+    notify(`Keyframe added at ${keyframe.toFixed(1)}s.`);
+  }
+
+  function downloadProject() {
+    const exportData = {
+      ...project,
+      editor: {
+        selectedCharacter: selectedId,
+        selectedMotion,
+        activeCue,
+        keyframes,
+        audio: hasAudio ? [{ id: "demo-chime", label: "Chime", at: 3.9 }] : [],
+      },
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "friday-analytics-update.kineti.json";
+    anchor.click();
+    URL.revokeObjectURL(url);
+    notify("Editable project JSON downloaded. Your working project was not changed.");
+  }
+
   return (
     <main className="studio-shell">
       <header className="topbar">
@@ -87,7 +122,7 @@ function App() {
         </div>
         <div className="top-actions">
           <button className="ghost-button" onClick={() => notify("Share links arrive with the local-cloud sync milestone.")}>Share</button>
-          <button className="primary-button" onClick={() => notify("Export panel opened — choose GIF, video, PNG, or a .kineti project package.")}>Export</button>
+          <button className="primary-button" onClick={downloadProject}>Download project</button>
         </div>
       </header>
 
@@ -112,7 +147,7 @@ function App() {
               {cueTypes.map((cue) => <button key={cue} className={selectedCue === cue ? "cue-chip selected" : "cue-chip"} onClick={() => setSelectedCue(cue)}>{cue}</button>)}
             </div>
           </div>
-          <button className="outline-button" onClick={() => notify(`${selectedCue} cue ready to add to the timeline.`)}>+ Add selected cue</button>
+          <button className="outline-button" onClick={addCue}>+ Add selected cue</button>
         </aside>
 
         <section className="workspace" aria-label="Canvas workspace">
@@ -124,7 +159,7 @@ function App() {
             <div className="canvas-glow" />
             <div className="canvas-card">
               <div className="stage-status"><span className="live-dot" />Live preview</div>
-              <div className="floating-cue analytics-cue"><span>↗</span><b>Analytics</b><small>Reviewing insights</small></div>
+              <div className={`floating-cue ${activeCue}-cue`}><span>{activeCue === "analytics" ? "↗" : activeCue === "music" ? "♪" : "+"}</span><b>{activeCue}</b><small>Scene task cue</small></div>
               <div className="thinking-bubbles"><i /><i /><i /></div>
               <Avatar character={selectedCharacter} />
               <div className="canvas-label"><strong>{selectedCharacter.name}</strong><span>{selectedMotion} · {playhead.toFixed(1)}s</span></div>
@@ -153,12 +188,12 @@ function App() {
       <section className="timeline" aria-label="Animation timeline">
         <div className="timeline-controls">
           <div className="transport"><button onClick={() => { setPlayhead(0); setIsPlaying(false); }} aria-label="Jump to start">|◀</button><button className="play-button" onClick={() => setIsPlaying((value) => !value)} aria-label={isPlaying ? "Pause preview" : "Play preview"}>{isPlaying ? "Ⅱ" : "▶"}</button><span>{playhead.toFixed(1)} / {scene.duration.toFixed(1)}s</span></div>
-          <div><button className="ghost-button" onClick={() => notify("Audio track editor will add trim, fade, loop, and volume controls.")}>♪ Add audio</button><button className="ghost-button" onClick={() => notify("Keyframe added to the editable timeline.")}>◇ Keyframe</button></div>
+          <div><button className="ghost-button" onClick={() => setHasAudio((value) => !value)}>♪ {hasAudio ? "Remove audio" : "Add audio"}</button><button className="ghost-button" onClick={addKeyframe}>◇ Keyframe</button></div>
         </div>
         <div className="timeline-ruler"><span>0s</span><span>1s</span><span>2s</span><span>3s</span><span>4s</span><span>5s</span></div>
-        <div className="track"><div className="track-title"><span className="track-dot character-dot" />{selectedCharacter.name}<small>Character</small></div><div className="track-lane"><span className="motion-segment" style={{ width: "100%" }}>{selectedMotion}</span><i className="playhead" style={{ left: `${(playhead / scene.duration) * 100}%` }} /></div></div>
-        <div className="track"><div className="track-title"><span className="track-dot cue-dot" />{selectedCue}<small>Task cue</small></div><div className="track-lane"><span className="cue-segment" style={{ left: "20%", width: "80%" }}>{selectedCue}</span></div></div>
-        <div className="track"><div className="track-title"><span className="track-dot audio-dot" />Chime<small>Audio</small></div><div className="track-lane"><span className="audio-segment" style={{ left: "78%", width: "8%" }}>♪</span></div></div>
+        <div className="track"><div className="track-title"><span className="track-dot character-dot" />{selectedCharacter.name}<small>Character</small></div><div className="track-lane"><span className="motion-segment" style={{ width: "100%" }}>{selectedMotion}</span>{keyframes.map((keyframe) => <i className="keyframe-marker" style={{ left: `${(keyframe / scene.duration) * 100}%` }} title={`Keyframe at ${keyframe.toFixed(1)} seconds`} key={keyframe} />)}<i className="playhead" style={{ left: `${(playhead / scene.duration) * 100}%` }} /></div></div>
+        <div className="track"><div className="track-title"><span className="track-dot cue-dot" />{activeCue}<small>Task cue</small></div><div className="track-lane"><span className="cue-segment" style={{ left: "20%", width: "80%" }}>{activeCue}</span></div></div>
+        {hasAudio && <div className="track"><div className="track-title"><span className="track-dot audio-dot" />Chime<small>Audio</small></div><div className="track-lane"><span className="audio-segment" style={{ left: "78%", width: "8%" }}>♪</span></div></div>}
       </section>
 
       {toast && <div className="toast" role="status">{toast}</div>}
