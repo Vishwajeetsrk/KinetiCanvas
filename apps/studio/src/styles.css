@@ -59,20 +59,222 @@ button { font: inherit; cursor: pointer; }
   50% { transform: scale(1.2); opacity: 0.7; }
 }
 
-.saved-state {
-  margin-left: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  color: #9fc0bf;
-  background: #173641;
+.view-switcher {
+  display: flex;
+  background: #172d3c;
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+  margin-left: 12px;
+}
+.view-btn {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 7px;
+  color: #a4c2c7;
+  background: transparent;
   font-size: 11px;
+  font-weight: 600;
+  transition: all .15s ease;
+}
+.view-btn.active {
+  background: #24525a;
+  color: #61e5d8;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.top-actions {
-  margin-left: auto;
+.render-mode-toggle {
+  display: flex;
+  background: rgba(14, 34, 48, 0.9);
+  border: 1px solid #2e4c5b;
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+.mode-btn {
+  padding: 4px 9px;
+  border: 0;
+  border-radius: 6px;
+  color: #9eb7bc;
+  background: transparent;
+  font-size: 11px;
+  transition: all .15s ease;
+}
+.mode-btn.active {
+  background: #1d4b58;
+  color: #61e5d8;
+  font-weight: 700;
+}
+
+/* Gallery View Styles */
+.gallery-view {
+  min-height: 100%;
+  padding: 40px 32px;
+  background: #0f1c27;
+  overflow-y: auto;
+}
+.gallery-header {
+  max-width: 1100px;
+  margin: 0 auto 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid #264355;
+  padding-bottom: 20px;
+}
+.gallery-header h2 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #f4fbfa;
+}
+.gallery-header p {
+  margin: 0;
+  color: #92b1b6;
+  max-width: 640px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.gallery-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  color: #72ded4;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.gallery-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+}
+
+.pal-card {
+  background: #142838;
+  border: 1px solid #284759;
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.pal-card:hover {
+  transform: translateY(-3px);
+  border-color: #4daaa0;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .32);
+}
+
+.pal-image-wrapper {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  display: grid;
+  place-items: center;
+}
+.pal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pal-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(14, 37, 49, 0.85);
+  color: #61e5d8;
+  font-size: 11px;
+  font-weight: 700;
+  backdrop-filter: blur(6px);
+}
+
+.pal-info {
+  margin: 14px 0 12px;
+}
+.pal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.pal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #f4fbfa;
+}
+.pal-role {
+  color: #72ded4;
+  font-size: 12px;
+  font-weight: 600;
+}
+.pal-powers {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: #8da9af;
+  line-height: 1.35;
+}
+
+.pal-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.pal-btn {
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #d8eded;
+  background: #1b3547;
+  border: 1px solid #2a4e65;
+  transition: all .15s ease;
+}
+.pal-btn:hover {
+  background: #23475e;
+  border-color: #61e5d8;
+  color: #fff;
+}
+.pal-btn-primary {
+  background: #23545b;
+  border-color: #3b888c;
+  color: #e6ffff;
+}
+.pal-btn-primary:hover {
+  background: #2b676f;
+}
+
+.pal-animate-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 9px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1f646b, #194e57);
+  color: #e5fffc;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all .15s ease;
+}
+.pal-animate-btn:hover {
+  background: linear-gradient(135deg, #287a82, #21646f);
+  transform: translateY(-1px);
+}
+
+.stage-hd-image {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .45));
 }
 
 .primary-button, .ghost-button, .outline-button, .icon-button, .accent-button {

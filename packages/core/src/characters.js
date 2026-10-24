@@ -1,7 +1,7 @@
 /**
- * Complete character catalog for KinetiCanvas companions, grounded in the
- * reference artwork with individual powers, working styles, visual morphology,
- * audio signatures, and motion states.
+ * Complete character catalog for KinetiCanvas companions, grounded directly
+ * in the high-resolution scanned reference artwork with individual powers,
+ * working styles, visual morphology, audio signatures, and motion states.
  */
 
 export const CHARACTERS = Object.freeze([
@@ -12,18 +12,19 @@ export const CHARACTERS = Object.freeze([
     role: "Organizer & Thinker",
     archetype: "Mind & Strategy",
     species: "Sprout Blob",
+    referenceImage: "/assets/characters/pomo-reference.png",
     visual: Object.freeze({
       baseColor: "#32c5ba",
       bellyColor: "#f6f3e5",
       accentColor: "#ff826e",
       cheekColor: "#ff9182",
       silhouette: "dome-blob",
-      headAccessory: "coral-pom-pom-antenna",
-      floatingElement: "idea-bubbles",
+      headAccessory: "floating-thought-spheres",
+      floatingElement: "3-thought-spheres",
       eyeStyle: "glossy-round",
     }),
     powers: Object.freeze([
-      "Mind Bubble Matrix (Spawns floating idea bubbles that coalesce into solutions)",
+      "Mind Bubble Matrix (Spawns 3 ascending thought spheres that coalesce into solutions)",
       "Zen Focus & Ideation Shield (Eliminates cognitive noise and clutter)",
       "Clustering & Organization (Sorts raw thoughts into structured project flows)",
     ]),
@@ -44,13 +45,14 @@ export const CHARACTERS = Object.freeze([
     role: "Designer & Painter",
     archetype: "Design & Aesthetics",
     species: "Plush Fox",
+    referenceImage: "/assets/characters/fynn-reference.png",
     visual: Object.freeze({
-      baseColor: "#2abcb5",
+      baseColor: "#2fbdb4",
       bellyColor: "#fdf8ec",
-      accentColor: "#ff7b67",
+      accentColor: "#ff7d68",
       cheekColor: "#ff8c7d",
       silhouette: "fluffy-fox",
-      headAccessory: "forehead-tuft-pointed-ears",
+      headAccessory: "pointed-ears-tufts",
       floatingElement: "paint-palette-brush",
       eyeStyle: "sparkling-laugh",
     }),
@@ -76,15 +78,16 @@ export const CHARACTERS = Object.freeze([
     role: "Analyst & Strategist",
     archetype: "Intelligence & Analytics",
     species: "Feathered Owl",
+    referenceImage: "/assets/characters/olli-reference.png",
     visual: Object.freeze({
-      baseColor: "#57d8cc",
+      baseColor: "#62ddd2",
       bellyColor: "#f7f5e9",
       accentColor: "#ff8573",
       cheekColor: "#ff8573",
-      beakColor: "#ff9d85",
+      beakColor: "#ff9583",
       silhouette: "plush-owl",
       headAccessory: "feather-ear-tufts",
-      floatingElement: "analytics-bar-chart",
+      floatingElement: "analytics-3d-chart",
       eyeStyle: "oversized-wise-rim",
     }),
     powers: Object.freeze([
@@ -109,10 +112,11 @@ export const CHARACTERS = Object.freeze([
     role: "Explorer & Systems",
     archetype: "Exploration & Connectivity",
     species: "Coral-Gilled Axolotl",
+    referenceImage: "/assets/characters/nixi-reference.png",
     visual: Object.freeze({
-      baseColor: "#39c8c1",
+      baseColor: "#3dcbc4",
       bellyColor: "#fcf8ea",
-      accentColor: "#ff7461",
+      accentColor: "#ff7c68",
       cheekColor: "#ff8575",
       silhouette: "smiling-axolotl",
       headAccessory: "branching-gill-frills",
@@ -141,6 +145,7 @@ export const CHARACTERS = Object.freeze([
     role: "Builder & Architect",
     archetype: "Architecture & Audio Synthesis",
     species: "Teal Baby Dragon",
+    referenceImage: "/assets/characters/ember-reference.png",
     visual: Object.freeze({
       baseColor: "#21b9b2",
       bellyColor: "#fed3c7",
@@ -174,18 +179,20 @@ export const CHARACTERS = Object.freeze([
     role: "Maker & Orchestrator",
     archetype: "Orchestration & Multi-Agent Intelligence",
     species: "Cosmic Plush Maker",
+    referenceImage: "/assets/characters/kipi-reference.png",
     visual: Object.freeze({
       baseColor: "#29c3bc",
       hoodColor: "#29c3bc",
       faceColor: "#fdf8ee",
       accentColor: "#ff745f",
       earColor: "#6ce1d7",
-      bootColor: "#1d3848",
+      bootColor: "#1c3445",
       cheekColor: "#ff8572",
+      buttonColor: "#ff745f",
       silhouette: "hooded-maker",
-      headAccessory: "spherical-antenna-floppy-ears",
+      headAccessory: "pom-pom-antenna-floppy-ears",
       floatingElement: "equalizer-waveform",
-      eyeStyle: "gentle-curved",
+      eyeStyle: "sparkling-laugh",
     }),
     powers: Object.freeze([
       "Agent Telepathy (Direct pipeline link to Antigravity, Codex, and Claude Code)",
