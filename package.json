@@ -10,6 +10,8 @@
   },
   "scripts": {
     "check": "pnpm test",
-    "test": "node --test packages/core/test/*.test.js"
+    "test": "node --test packages/*/test/*.test.js",
+    "mcp": "node packages/mcp/bin/kineticanvas-mcp.js",
+    "cli": "node packages/cli/bin/kineti.js"
   }
 }

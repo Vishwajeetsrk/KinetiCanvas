@@ -1,16 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
-import { createProject, createScene, createTaskCue, addScene, addTaskCue } from "@kineticanvas/core";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  createProject,
+  createScene,
+  createTaskCue,
+  addScene,
+  addTaskCue,
+  CHARACTERS,
+  getCharacterById,
+} from "@kineticanvas/core";
 import { createRoot } from "react-dom/client";
+import { CompanionRenderer } from "./components/CharacterAvatars.jsx";
+import { playCharacterSound, playCueSound } from "./audio/synth.js";
+import {
+  downloadBlob,
+  exportSceneAsPng,
+  exportSceneAsSvg,
+  generateReactCode,
+  recordCanvasLoop,
+} from "./export/exportEngine.js";
 import "./styles.css";
-
-const characters = [
-  { id: "kipi", name: "Kipi", role: "Maker", accent: "antenna", color: "#25c5bf" },
-  { id: "pomo", name: "Pomo", role: "Organizer", accent: "dots", color: "#72e3dc" },
-  { id: "fynn", name: "Fynn", role: "Designer", accent: "ears", color: "#2bbdb9" },
-  { id: "olli", name: "Olli", role: "Analyst", accent: "wings", color: "#66d9cd" },
-  { id: "nixi", name: "Nixi", role: "Explorer", accent: "gills", color: "#41c7c2" },
-  { id: "ember", name: "Ember", role: "Builder", accent: "horns", color: "#20b9b3" },
-];
 
 const motions = ["Idle", "Walk", "Think", "Work", "Review", "Sleep"];
 const cueTypes = ["analytics", "browser", "design", "document", "terminal", "music"];
@@ -23,52 +31,62 @@ function createDemoProject() {
   });
   const scene = addTaskCue(
     createScene({ id: "scene-analytics", name: "Analytics update", duration: 5 }),
-    createTaskCue({ id: "cue-analytics", type: "analytics", start: 1, duration: 4, label: "Reviewing analytics" }),
+    createTaskCue({
+      id: "cue-analytics",
+      type: "analytics",
+      start: 1,
+      duration: 4,
+      label: "Reviewing analytics",
+    }),
   );
   return addScene(base, scene, "2026-10-24T00:00:00.000Z");
 }
 
-function Avatar({ character, size = "large" }) {
-  return (
-    <div className={`avatar avatar-${size} accent-${character.accent}`} style={{ "--avatar": character.color }} aria-label={`${character.name} character preview`}>
-      <span className="avatar-ear avatar-ear-left" />
-      <span className="avatar-ear avatar-ear-right" />
-      <span className="avatar-frill avatar-frill-left" />
-      <span className="avatar-frill avatar-frill-right" />
-      <span className="avatar-eye avatar-eye-left" />
-      <span className="avatar-eye avatar-eye-right" />
-      <span className="avatar-smile" />
-      <span className="avatar-cheek avatar-cheek-left" />
-      <span className="avatar-cheek avatar-cheek-right" />
-    </div>
-  );
-}
-
 function App() {
   const [project] = useState(createDemoProject);
-  const [selectedId, setSelectedId] = useState("olli");
+  const [selectedId, setSelectedId] = useState("ember");
   const [selectedMotion, setSelectedMotion] = useState("Work");
   const [selectedCue, setSelectedCue] = useState("analytics");
   const [activeCue, setActiveCue] = useState("analytics");
   const [hasAudio, setHasAudio] = useState(true);
-  const [keyframes, setKeyframes] = useState([0]);
+  const [keyframes, setKeyframes] = useState([0, 1.5, 3.8]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playhead, setPlayhead] = useState(0);
   const [toast, setToast] = useState("");
-  const selectedCharacter = useMemo(() => characters.find((character) => character.id === selectedId), [selectedId]);
+  const [showExportModal, setShowExportModal] = useState(false);
+
+  // Transform controls
+  const [posX, setPosX] = useState(0);
+  const [posY, setPosY] = useState(0);
+  const [scale, setScale] = useState(100);
+  const [rotation, setRotation] = useState(0);
+
+  const stageRef = useRef(null);
+
+  const selectedCharacter = useMemo(
+    () => getCharacterById(selectedId) || CHARACTERS[4],
+    [selectedId],
+  );
   const scene = project.scenes[0];
 
   useEffect(() => {
     if (!isPlaying) return undefined;
     const timer = window.setInterval(() => {
-      setPlayhead((current) => (current >= scene.duration ? 0 : Number((current + 0.1).toFixed(1))));
+      setPlayhead((current) => {
+        const next = current >= scene.duration ? 0 : Number((current + 0.1).toFixed(1));
+        // Trigger audio chime near cue
+        if (hasAudio && Math.abs(next - 1.0) < 0.05) {
+          playCueSound(activeCue);
+        }
+        return next;
+      });
     }, 100);
     return () => window.clearInterval(timer);
-  }, [isPlaying, scene.duration]);
+  }, [isPlaying, scene.duration, hasAudio, activeCue]);
 
   useEffect(() => {
     if (!toast) return undefined;
-    const timer = window.setTimeout(() => setToast(""), 2600);
+    const timer = window.setTimeout(() => setToast(""), 3000);
     return () => window.clearTimeout(timer);
   }, [toast]);
 
@@ -76,18 +94,39 @@ function App() {
     setToast(message);
   }
 
-  function addCue() {
+  function handleSelectCharacter(id) {
+    setSelectedId(id);
+    if (hasAudio) {
+      playCharacterSound(id);
+    }
+    const char = getCharacterById(id);
+    notify(`Selected ${char.name} — ${char.title}`);
+  }
+
+  function handleAddCue() {
     setActiveCue(selectedCue);
-    notify(`${selectedCue} cue added to this scene.`);
+    if (hasAudio) {
+      playCueSound(selectedCue);
+    }
+    notify(`Attached ${selectedCue} cue to scene stage.`);
+  }
+
+  function handleMotionChange(motion) {
+    setSelectedMotion(motion);
+    if (hasAudio) {
+      playCharacterSound(selectedId, 0.15);
+    }
   }
 
   function addKeyframe() {
     const keyframe = Number(playhead.toFixed(1));
-    setKeyframes((current) => current.includes(keyframe) ? current : [...current, keyframe].sort((a, b) => a - b));
+    setKeyframes((current) =>
+      current.includes(keyframe) ? current : [...current, keyframe].sort((a, b) => a - b),
+    );
     notify(`Keyframe added at ${keyframe.toFixed(1)}s.`);
   }
 
-  function downloadProject() {
+  function downloadProjectJson() {
     const exportData = {
       ...project,
       editor: {
@@ -95,25 +134,67 @@ function App() {
         selectedMotion,
         activeCue,
         keyframes,
+        transform: { posX, posY, scale, rotation },
         audio: hasAudio ? [{ id: "demo-chime", label: "Chime", at: 3.9 }] : [],
       },
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "friday-analytics-update.kineti.json";
-    anchor.click();
-    URL.revokeObjectURL(url);
-    notify("Editable project JSON downloaded. Your working project was not changed.");
+    downloadBlob(blob, `${selectedCharacter.name.toLowerCase()}-${activeCue}.kineti.json`);
+    notify("Portable .kineti project manifest downloaded.");
+  }
+
+  function handleExportPng() {
+    const svg = stageRef.current?.querySelector("svg");
+    if (!svg) {
+      notify("SVG stage not ready for PNG export.");
+      return;
+    }
+    exportSceneAsPng(svg, selectedCharacter.name, activeCue);
+    notify(`High-res PNG snapshot exported for ${selectedCharacter.name}!`);
+    setShowExportModal(false);
+  }
+
+  function handleExportSvg() {
+    const svg = stageRef.current?.querySelector("svg");
+    if (!svg) {
+      notify("SVG stage not ready for export.");
+      return;
+    }
+    exportSceneAsSvg(svg, selectedCharacter.name, activeCue);
+    notify(`Standalone vector SVG exported for ${selectedCharacter.name}!`);
+    setShowExportModal(false);
+  }
+
+  function handleRecordVideo() {
+    const svg = stageRef.current?.querySelector("svg");
+    notify("Recording 3-second animated WebM video clip...");
+    recordCanvasLoop(
+      svg,
+      3,
+      (pct) => notify(`Recording video: ${pct}% complete...`),
+      () => {
+        notify("Animated WebM video downloaded successfully!");
+        setShowExportModal(false);
+      },
+    );
+  }
+
+  function handleCopyCode() {
+    const code = generateReactCode(selectedCharacter, selectedMotion, activeCue);
+    navigator.clipboard?.writeText(code);
+    notify("React component code copied to clipboard!");
+    setShowExportModal(false);
   }
 
   return (
     <main className="studio-shell">
+      {/* Top Bar */}
       <header className="topbar">
         <div className="brand" aria-label="KinetiCanvas Studio">
           <img className="brand-mark" src="/ember-builder.png" alt="Ember, the dragon builder" />
-          <span>Kineti<span>Canvas</span></span>
+          <span>
+            Kineti<span>Canvas</span>
+          </span>
         </div>
         <div className="project-meta">
           <span className="project-dot" />
@@ -121,82 +202,468 @@ function App() {
           <span className="saved-state">Saved locally</span>
         </div>
         <div className="top-actions">
-          <button className="ghost-button" onClick={() => notify("Share links arrive with the local-cloud sync milestone.")}>Share</button>
-          <button className="primary-button" onClick={downloadProject}>Download project</button>
+          <button
+            className={`ghost-button ${hasAudio ? "active" : ""}`}
+            onClick={() => setHasAudio((v) => !v)}
+            aria-label="Toggle procedural audio"
+          >
+            {hasAudio ? "♪ Audio On" : "✕ Audio Muted"}
+          </button>
+          <button className="accent-button" onClick={() => setShowExportModal(true)}>
+            Export Everywhere ▾
+          </button>
+          <button className="primary-button" onClick={downloadProjectJson}>
+            Download .kineti
+          </button>
         </div>
       </header>
 
+      {/* Main 3-column Editor Grid */}
       <section className="editor-grid">
+        {/* Left Sidebar: Asset & Companion Library */}
         <aside className="sidebar asset-panel" aria-label="Asset library">
           <div className="panel-heading">
-            <div><p className="eyebrow">Library</p><h1>Characters</h1></div>
-            <button className="icon-button" aria-label="Create character" onClick={() => notify("Character creator is the next asset-library milestone.")}>+</button>
+            <div>
+              <p className="eyebrow">Library</p>
+              <h1>Companions</h1>
+            </div>
+            <button
+              className="icon-button"
+              aria-label="Create custom character"
+              onClick={() => notify("Use the Character Creator to design your own mascot!")}
+            >
+              +
+            </button>
           </div>
           <div className="character-list">
-            {characters.map((character) => (
-              <button key={character.id} className={`character-card ${selectedId === character.id ? "selected" : ""}`} onClick={() => setSelectedId(character.id)}>
-                <Avatar character={character} size="small" />
-                <span><strong>{character.name}</strong><small>{character.role}</small></span>
+            {CHARACTERS.map((character) => (
+              <button
+                key={character.id}
+                className={`character-card ${selectedId === character.id ? "selected" : ""}`}
+                onClick={() => handleSelectCharacter(character.id)}
+              >
+                <div className="card-mini-avatar">
+                  <CompanionRenderer characterId={character.id} motion="Idle" size={38} />
+                </div>
+                <span>
+                  <strong>{character.name}</strong>
+                  <small>{character.role}</small>
+                  <span className="badge-species">{character.species}</span>
+                </span>
               </button>
             ))}
           </div>
+
           <div className="library-divider" />
+
+          {/* Task Cues */}
           <div className="asset-section">
             <p className="eyebrow">Task cues</p>
             <div className="cue-grid">
-              {cueTypes.map((cue) => <button key={cue} className={selectedCue === cue ? "cue-chip selected" : "cue-chip"} onClick={() => setSelectedCue(cue)}>{cue}</button>)}
+              {cueTypes.map((cue) => (
+                <button
+                  key={cue}
+                  className={selectedCue === cue ? "cue-chip selected" : "cue-chip"}
+                  onClick={() => setSelectedCue(cue)}
+                >
+                  {cue === "analytics"
+                    ? "↗ Analytics"
+                    : cue === "browser"
+                    ? "🌐 Chrome"
+                    : cue === "design"
+                    ? "🎨 Canva"
+                    : cue === "music"
+                    ? "🎵 Music"
+                    : cue === "terminal"
+                    ? "💻 Code"
+                    : "📄 Doc"}
+                </button>
+              ))}
             </div>
           </div>
-          <button className="outline-button" onClick={addCue}>+ Add selected cue</button>
+          <button className="outline-button" onClick={handleAddCue}>
+            + Add selected cue to stage
+          </button>
         </aside>
 
+        {/* Center Workspace: Canvas Stage */}
         <section className="workspace" aria-label="Canvas workspace">
           <div className="workspace-toolbar">
-            <div className="breadcrumb">Scene 01 <span>/</span> {scene.name}</div>
-            <div className="viewport-options"><button>100%</button><button>Fit</button><button aria-label="Canvas settings">⋯</button></div>
+            <div className="breadcrumb">
+              Scene 01 <span>/</span> {scene.name}
+            </div>
+            <div className="viewport-options">
+              <button onClick={() => setScale(100)}>100%</button>
+              <button onClick={() => setScale(125)}>Fit</button>
+              <button
+                aria-label="Reset transform"
+                onClick={() => {
+                  setPosX(0);
+                  setPosY(0);
+                  setScale(100);
+                  setRotation(0);
+                }}
+              >
+                Reset
+              </button>
+            </div>
           </div>
-          <div className="canvas-stage">
+
+          <div className="canvas-stage" ref={stageRef}>
             <div className="canvas-glow" />
             <div className="canvas-card">
-              <div className="stage-status"><span className="live-dot" />Live preview</div>
-              <div className={`floating-cue ${activeCue}-cue`}><span>{activeCue === "analytics" ? "↗" : activeCue === "music" ? "♪" : "+"}</span><b>{activeCue}</b><small>Scene task cue</small></div>
-              <div className="thinking-bubbles"><i /><i /><i /></div>
-              <Avatar character={selectedCharacter} />
-              <div className="canvas-label"><strong>{selectedCharacter.name}</strong><span>{selectedMotion} · {playhead.toFixed(1)}s</span></div>
+              <div className="stage-status">
+                <span className="live-dot" />
+                Live Preview
+              </div>
+
+              {/* Dynamic Task Cue Badge */}
+              <div className={`floating-cue ${activeCue}-cue`}>
+                <span>
+                  {activeCue === "analytics"
+                    ? "↗"
+                    : activeCue === "browser"
+                    ? "🌐"
+                    : activeCue === "design"
+                    ? "🎨"
+                    : activeCue === "music"
+                    ? "🎵"
+                    : activeCue === "terminal"
+                    ? ">_"
+                    : "📄"}
+                </span>
+                <b>{activeCue}</b>
+                <small>Scene task cue</small>
+              </div>
+
+              {/* Interactive Character Figure with Transforms */}
+              <div
+                className="stage-figure-container"
+                style={{
+                  transform: `translate(${posX}px, ${posY}px) scale(${scale / 100}) rotate(${rotation}deg)`,
+                }}
+              >
+                <CompanionRenderer
+                  characterId={selectedCharacter.id}
+                  motion={selectedMotion}
+                  size={200}
+                />
+              </div>
+
+              <div className="canvas-label">
+                <strong>{selectedCharacter.name}</strong>
+                <span>
+                  {selectedMotion} · {playhead.toFixed(1)}s
+                </span>
+              </div>
               <div className="canvas-floor" />
             </div>
           </div>
         </section>
 
+        {/* Right Sidebar: Inspector */}
         <aside className="sidebar inspector" aria-label="Inspector">
-          <div className="panel-heading"><div><p className="eyebrow">Inspector</p><h2>{selectedCharacter.name}</h2></div><button className="icon-button" aria-label="More layer options">⋯</button></div>
-          <div className="inspector-preview"><Avatar character={selectedCharacter} size="medium" /><span>{selectedCharacter.role}</span></div>
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Inspector</p>
+              <h2>{selectedCharacter.name}</h2>
+            </div>
+            <button
+              className="icon-button"
+              aria-label="Play sound"
+              onClick={() => playCharacterSound(selectedCharacter.id)}
+            >
+              ♪
+            </button>
+          </div>
+
+          <div className="inspector-preview">
+            <CompanionRenderer characterId={selectedCharacter.id} motion={selectedMotion} size={64} />
+            <div className="inspector-preview-text">
+              <strong>{selectedCharacter.title}</strong>
+              <small>{selectedCharacter.archetype}</small>
+            </div>
+          </div>
+
+          {/* Motion Presets */}
           <section className="inspector-section">
-            <div className="section-row"><h3>Motion</h3><button onClick={() => notify("Motion presets remain editable as timeline keyframes.")}>Edit</button></div>
-            <div className="motion-list">{motions.map((motion) => <button key={motion} className={selectedMotion === motion ? "motion-chip selected" : "motion-chip"} onClick={() => setSelectedMotion(motion)}>{motion}</button>)}</div>
+            <div className="section-row">
+              <h3>Motion Presets</h3>
+              <button onClick={() => notify("Active motion presets update timeline keyframes.")}>
+                Edit
+              </button>
+            </div>
+            <div className="motion-list">
+              {motions.map((motion) => (
+                <button
+                  key={motion}
+                  className={selectedMotion === motion ? "motion-chip selected" : "motion-chip"}
+                  onClick={() => handleMotionChange(motion)}
+                >
+                  {motion}
+                </button>
+              ))}
+            </div>
           </section>
+
+          {/* Individual Powers */}
           <section className="inspector-section">
-            <div className="section-row"><h3>Transform</h3><button>Reset</button></div>
-            <label>Position <span>960 × 540</span></label>
-            <label>Scale <span>100%</span></label>
-            <label>Rotation <span>0°</span></label>
+            <div className="section-row">
+              <h3>Specific Powers</h3>
+            </div>
+            <div className="powers-list">
+              {selectedCharacter.powers.map((power, idx) => (
+                <div key={idx} className="power-item">
+                  {power}
+                </div>
+              ))}
+            </div>
           </section>
-          <section className="inspector-section"><div className="section-row"><h3>Appearance</h3><button>Customize</button></div><div className="color-row"><i style={{ background: selectedCharacter.color }} /><i style={{ background: "#ff947c" }} /><i style={{ background: "#f5f0df" }} /></div></section>
+
+          {/* Working Style */}
+          <section className="inspector-section">
+            <div className="section-row">
+              <h3>Working Style</h3>
+            </div>
+            <div className="working-style-box">{selectedCharacter.workingStyle}</div>
+          </section>
+
+          {/* Transform Sliders */}
+          <section className="inspector-section">
+            <div className="section-row">
+              <h3>Transform</h3>
+              <button
+                onClick={() => {
+                  setPosX(0);
+                  setPosY(0);
+                  setScale(100);
+                  setRotation(0);
+                }}
+              >
+                Reset
+              </button>
+            </div>
+            <div className="transform-controls">
+              <div className="control-row">
+                <label>Position X</label>
+                <input
+                  type="range"
+                  min="-150"
+                  max="150"
+                  value={posX}
+                  onChange={(e) => setPosX(Number(e.target.value))}
+                />
+                <span>{posX}px</span>
+              </div>
+              <div className="control-row">
+                <label>Position Y</label>
+                <input
+                  type="range"
+                  min="-100"
+                  max="100"
+                  value={posY}
+                  onChange={(e) => setPosY(Number(e.target.value))}
+                />
+                <span>{posY}px</span>
+              </div>
+              <div className="control-row">
+                <label>Scale</label>
+                <input
+                  type="range"
+                  min="50"
+                  max="180"
+                  value={scale}
+                  onChange={(e) => setScale(Number(e.target.value))}
+                />
+                <span>{scale}%</span>
+              </div>
+              <div className="control-row">
+                <label>Rotation</label>
+                <input
+                  type="range"
+                  min="-45"
+                  max="45"
+                  value={rotation}
+                  onChange={(e) => setRotation(Number(e.target.value))}
+                />
+                <span>{rotation}°</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Palette Chips */}
+          <section className="inspector-section">
+            <div className="section-row">
+              <h3>Visual Palette</h3>
+            </div>
+            <div className="color-row">
+              <i
+                style={{ background: selectedCharacter.visual.baseColor }}
+                title="Base color"
+                onClick={() => notify(`Base color: ${selectedCharacter.visual.baseColor}`)}
+              />
+              <i
+                style={{ background: selectedCharacter.visual.accentColor }}
+                title="Accent color"
+                onClick={() => notify(`Accent color: ${selectedCharacter.visual.accentColor}`)}
+              />
+              <i
+                style={{ background: selectedCharacter.visual.bellyColor }}
+                title="Belly/chest tone"
+                onClick={() => notify(`Chest/belly tone: ${selectedCharacter.visual.bellyColor}`)}
+              />
+            </div>
+          </section>
         </aside>
       </section>
 
+      {/* Bottom Timeline */}
       <section className="timeline" aria-label="Animation timeline">
         <div className="timeline-controls">
-          <div className="transport"><button onClick={() => { setPlayhead(0); setIsPlaying(false); }} aria-label="Jump to start">|◀</button><button className="play-button" onClick={() => setIsPlaying((value) => !value)} aria-label={isPlaying ? "Pause preview" : "Play preview"}>{isPlaying ? "Ⅱ" : "▶"}</button><span>{playhead.toFixed(1)} / {scene.duration.toFixed(1)}s</span></div>
-          <div><button className="ghost-button" onClick={() => setHasAudio((value) => !value)}>♪ {hasAudio ? "Remove audio" : "Add audio"}</button><button className="ghost-button" onClick={addKeyframe}>◇ Keyframe</button></div>
+          <div className="transport">
+            <button
+              onClick={() => {
+                setPlayhead(0);
+                setIsPlaying(false);
+              }}
+              aria-label="Jump to start"
+            >
+              |◀
+            </button>
+            <button
+              className="play-button"
+              onClick={() => setIsPlaying((value) => !value)}
+              aria-label={isPlaying ? "Pause preview" : "Play preview"}
+            >
+              {isPlaying ? "Ⅱ" : "▶"}
+            </button>
+            <span>
+              {playhead.toFixed(1)} / {scene.duration.toFixed(1)}s
+            </span>
+          </div>
+          <div>
+            <button
+              className={`ghost-button ${hasAudio ? "active" : ""}`}
+              onClick={() => setHasAudio((value) => !value)}
+            >
+              ♪ {hasAudio ? "Audio: Active" : "Audio: Muted"}
+            </button>
+            <button className="ghost-button" onClick={addKeyframe}>
+              ◇ Keyframe
+            </button>
+          </div>
         </div>
-        <div className="timeline-ruler"><span>0s</span><span>1s</span><span>2s</span><span>3s</span><span>4s</span><span>5s</span></div>
-        <div className="track"><div className="track-title"><span className="track-dot character-dot" />{selectedCharacter.name}<small>Character</small></div><div className="track-lane"><span className="motion-segment" style={{ width: "100%" }}>{selectedMotion}</span>{keyframes.map((keyframe) => <i className="keyframe-marker" style={{ left: `${(keyframe / scene.duration) * 100}%` }} title={`Keyframe at ${keyframe.toFixed(1)} seconds`} key={keyframe} />)}<i className="playhead" style={{ left: `${(playhead / scene.duration) * 100}%` }} /></div></div>
-        <div className="track"><div className="track-title"><span className="track-dot cue-dot" />{activeCue}<small>Task cue</small></div><div className="track-lane"><span className="cue-segment" style={{ left: "20%", width: "80%" }}>{activeCue}</span></div></div>
-        {hasAudio && <div className="track"><div className="track-title"><span className="track-dot audio-dot" />Chime<small>Audio</small></div><div className="track-lane"><span className="audio-segment" style={{ left: "78%", width: "8%" }}>♪</span></div></div>}
+
+        <div className="timeline-ruler">
+          <span>0s</span>
+          <span>1s</span>
+          <span>2s</span>
+          <span>3s</span>
+          <span>4s</span>
+          <span>5s</span>
+        </div>
+
+        {/* Character Track */}
+        <div className="track">
+          <div className="track-title">
+            <span className="track-dot character-dot" />
+            {selectedCharacter.name}
+            <small>Character</small>
+          </div>
+          <div className="track-lane">
+            <span className="motion-segment" style={{ width: "100%" }}>
+              {selectedMotion}
+            </span>
+            {keyframes.map((keyframe) => (
+              <i
+                className="keyframe-marker"
+                style={{ left: `${(keyframe / scene.duration) * 100}%` }}
+                title={`Keyframe at ${keyframe.toFixed(1)}s`}
+                key={keyframe}
+              />
+            ))}
+            <i
+              className="playhead"
+              style={{ left: `${(playhead / scene.duration) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Task Cue Track */}
+        <div className="track">
+          <div className="track-title">
+            <span className="track-dot cue-dot" />
+            {activeCue}
+            <small>Task cue</small>
+          </div>
+          <div className="track-lane">
+            <span className="cue-segment" style={{ left: "20%", width: "80%" }}>
+              {activeCue}
+            </span>
+          </div>
+        </div>
+
+        {/* Audio Track */}
+        {hasAudio && (
+          <div className="track">
+            <div className="track-title">
+              <span className="track-dot audio-dot" />
+              {selectedCharacter.name} Tone
+              <small>Audio</small>
+            </div>
+            <div className="track-lane">
+              <span className="audio-segment" style={{ left: "20%", width: "80%" }}>
+                ♪ {selectedCharacter.soundProfile.timbre}
+              </span>
+            </div>
+          </div>
+        )}
       </section>
 
-      {toast && <div className="toast" role="status">{toast}</div>}
+      {/* Export Everywhere Modal */}
+      {showExportModal && (
+        <div className="modal-overlay" onClick={() => setShowExportModal(false)}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Export KinetiCanvas Scene</h2>
+              <button className="icon-button" onClick={() => setShowExportModal(false)}>
+                ✕
+              </button>
+            </div>
+            <p style={{ color: "#a2c2c7", fontSize: 13, margin: "0 0 16px" }}>
+              Export <b>{selectedCharacter.name}</b> in <b>{selectedMotion}</b> mode with the <b>{activeCue}</b> cue:
+            </p>
+            <div className="export-grid">
+              <button className="export-card" onClick={handleExportPng}>
+                <b>🖼 PNG Image</b>
+                <span>High-res snapshot with transparent / canvas background</span>
+              </button>
+              <button className="export-card" onClick={handleExportSvg}>
+                <b>📐 Vector SVG</b>
+                <span>Infinitely scalable vector artwork for web & Figma</span>
+              </button>
+              <button className="export-card" onClick={handleRecordVideo}>
+                <b>🎬 Animated WebM</b>
+                <span>Recorded motion video loop for presentations & chats</span>
+              </button>
+              <button className="export-card" onClick={downloadProjectJson}>
+                <b>📦 .kineti Project</b>
+                <span>Portable JSON package for desktop, web, & agents</span>
+              </button>
+              <button className="export-card" onClick={handleCopyCode}>
+                <b>⚛ React JSX Code</b>
+                <span>Copy ready-to-use React animation component</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {toast && (
+        <div className="toast" role="status">
+          {toast}
+        </div>
+      )}
     </main>
   );
 }

@@ -1,0 +1,13 @@
+{
+  "name": "@kineticanvas/mcp",
+  "version": "0.1.0",
+  "description": "Local Model Context Protocol (MCP) server for KinetiCanvas studio automation",
+  "type": "module",
+  "bin": {
+    "kineticanvas-mcp": "./bin/kineticanvas-mcp.js"
+  },
+  "main": "./src/server.js",
+  "dependencies": {
+    "@kineticanvas/core": "workspace:*"
+  }
+}

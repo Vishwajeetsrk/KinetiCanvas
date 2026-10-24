@@ -1,0 +1,13 @@
+{
+  "name": "@kineticanvas/cli",
+  "version": "0.1.0",
+  "description": "Command line interface for KinetiCanvas project management and automation",
+  "type": "module",
+  "bin": {
+    "kineti": "./bin/kineti.js"
+  },
+  "main": "./src/cli.js",
+  "dependencies": {
+    "@kineticanvas/core": "workspace:*"
+  }
+}

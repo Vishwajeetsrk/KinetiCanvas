@@ -2,192 +2,152 @@
 
 > Create characters. Direct the motion. Export everywhere.
 
-KinetiCanvas is a local-first character animation studio for the web and desktop. Create an original mascot from references, animate it with editable motion presets, add task cues and sound, preview every change, and export reusable media or code.
+KinetiCanvas is a local-first character animation studio for the web, desktop, and AI agent automation. Create and customize original companion mascots, animate them with interactive motion presets, attach task cues, generate procedural audio, preview every change in real time, and export directly to PNG, SVG, WebM video, React code, or portable `.kineti` project packages.
 
-> **Project status:** Foundation and first interactive studio shell. The repository contains the product specification, portable project-model package, starter editor interface, Ember brand reference, asset rules, test plan, and contributor setup. Rendering, editable character packages, export, MCP/CLI, and desktop installers remain planned milestones.
+![KinetiCanvas six-character reference](Kipi-pet-run/six-character-task-and-sound-reference.png)
 
-![KinetiCanvas six-character concept reference](Kipi-pet-run/six-character-task-and-sound-reference.png)
+## Core Capabilities
 
-## What KinetiCanvas will do
+- **6 Signature Companions:** Each with distinct visual morphology, unique powers, working styles, and audio profiles.
+- **Interactive Canvas & Inspector:** Position, scale, rotation, and appearance controls with live visual transforms.
+- **6 Motion States:** Idle (subtle breathing), Walk (bouncing stride), Think (floating idea bubbles), Work (animated tool execution), Review (scanning aura), and Sleep (peaceful resting).
+- **Task Cues:** Generic, configurable cues for Analytics (↗), Browser (🌐 Chrome), Design (🎨 Canva/Figma), Music (🎵), Terminal (💻 Code), and Document (📄).
+- **Procedural Web Audio Engine:** Synthesizes character power tones and cue chimes directly in the browser with zero external dependencies.
+- **Multi-Format Export Engine:**
+  - **PNG Snapshot:** High-resolution image export with transparent or canvas background.
+  - **Standalone Vector SVG:** Infinitely scalable vector artwork for web, Figma, or design tools.
+  - **Animated WebM Video:** In-browser canvas recording for presentations, chat, and demos.
+  - **Portable `.kineti` Manifest:** Complete portable JSON project format for cross-platform sharing.
+  - **React JSX Code:** Instant component code export to drop directly into React applications.
+- **Local MCP Server:** Connect AI agents (Antigravity, Claude Code, Codex) to programmatically direct animations, scenes, and exports.
+- **Command-Line Interface (CLI):** Manage projects, inspect scenes, and validate project manifests via `kineti`.
+- **Local-First Privacy:** Runs 100% offline; no mandatory accounts or cloud dependencies.
 
-- Create a character from built-in assets or image, video, GIF, website, and Figma references.
-- Edit characters with a visual canvas, layers, inspector, timeline, keyframes, and presets.
-- Animate idle, walking, waving, thinking, working, reviewing, painting, analyzing, sleeping, and celebration states.
-- Add small timeline-driven task cues such as browser, design, analytics, document, terminal, or music symbols.
-- Add sound effects and music, then control trim, loop, timing, fades, and volume.
-- Preview scenes immediately before export.
-- Export PNG, vector-aware SVG, GIF, WebM, MP4, sprite sheets, a portable `.kineti` project, and React/JSON animation code.
-- Work offline and store projects locally by default.
-- Offer local MCP and CLI tools for Codex, Claude Code, Antigravity, and other compatible agents.
+---
 
-## Product surfaces
+## The Six Companions: Individual Powers & Profiles
 
-| Surface | Purpose |
-| --- | --- |
-| Browser app | A progressive web app for creating, previewing, and exporting locally. |
-| Windows app | Native-feeling local editor with fast file access and hardware-accelerated preview. |
-| macOS app | Native-feeling local editor for Apple Silicon and Intel Macs. |
-| Linux app | Desktop build where the runtime is supported. |
-| MCP + CLI | Agent-friendly local control of explicit KinetiCanvas projects. |
+Every companion in KinetiCanvas is crafted with an individual power matrix, personality, and signature working style grounded in the reference artwork:
 
-## The starter companions
+| Companion | Archetype & Species | Signature Powers | Working Style & Visual Elements | Audio Signature |
+| :--- | :--- | :--- | :--- | :--- |
+| **Pomo** | **Mind & Strategy**<br>*(Sprout Blob)* | • Mind Bubble Matrix<br>• Zen Focus & Ideation Shield<br>• Clustering & Organization | Calm contemplation, floating idea bubbles, dome teal plush silhouette with coral pom-pom antenna and ivory belly. | 432 Hz Meditative bubble pop (Sine wave) |
+| **Fynn** | **Design & Aesthetics**<br>*(Plush Fox)* | • Chromatic Realization<br>• Vector Transmutation<br>• Design Intelligence | Dynamic brushstrokes, color layering, Canva/Figma design styling, pointed fox ears with coral inner fur, chest ruff, palette & brush. | 587 Hz Creative woodblock & canvas brush chime (Triangle wave) |
+| **Olli** | **Intelligence & Analytics**<br>*(Feathered Owl)* | • Predictive Telemetry<br>• Multi-Metric Synthesis<br>• Clairvoyant Audit | Methodical observation, telemetry scanning, mint owl silhouette, scalloped chest feathers, peach-coral wings, rising 3D bar chart. | 659 Hz Crystal glass data chime (Sine wave) |
+| **Nixi** | **Exploration & Systems**<br>*(Coral-Gilled Axolotl)* | • Web Teleportation<br>• API Deep-Diving<br>• Playful Resiliency | Joyful exploration, rapid browser traversal (Chrome & web apps), 6 branching coral external gill frills, retro handheld console. | 523 Hz 8-bit retro arcade blip (Square wave) |
+| **Ember** | **Architecture & Music**<br>*(Teal Baby Dragon)* | • Code Ignition<br>• Harmonic Audio Synthesis<br>• Tenacious Resilience | Energetic construction, compiling scalable builds, ivory horns, coral dorsal crest & dragon wings, floating musical notes. | 440 Hz Warm analog synth power chord (Sawtooth wave) |
+| **Kipi** | **Orchestration & Multi-Agent**<br>*(Cosmic Plush Maker)* | • Agent Telepathy (Codex/Claude/Antigravity)<br>• Audio Spectrum Equalization<br>• Omni-Tool Synthesis | Universal multi-agent orchestration, hooded plush maker, glowing coral spherical antenna, floppy ears, equalizer waveform. | 880 Hz High-tech frequency sweep & agent chirp (Sine wave) |
 
-The asset library will begin with six editable, reusable characters. They are starting points, not limits: users can create their own companions from licensed references.
+---
 
-| Character | Role | Character feel |
-| --- | --- | --- |
-| Kipi | Creative assistant | Curious, focused, energetic |
-| Pomo | Organizer | Calm, cheerful, steady |
-| Fynn | Designer | Nimble, playful, precise |
-| Olli | Analyst | Thoughtful, observant, methodical |
-| Nixi | Explorer | Friendly, expressive, experimental |
-| Ember | Builder | Bold, enthusiastic, resilient |
+## Quickstart & Local Studio
 
-## Demo: the intended workflow
-
-The application is not implemented yet; this walkthrough shows the planned experience.
-
-1. Create a project called **Friday analytics update**.
-2. Pick Olli, or import your own character reference.
-3. Drag Olli onto the canvas and choose the **Analyze** motion preset.
-4. Add an **Analytics** task cue from 00:01 to 00:05 and a soft notification sound at 00:04.
-5. Adjust the timeline, preview the loop, and edit colors, expression, cue position, or sound level.
-6. Export a transparent GIF for chat, a WebM/MP4 for a presentation, and a `.kineti` project package for future edits.
-
-```text
-Project
-  Scene: Friday analytics update
-    Layer: Olli character
-      Motion: Analyze, 0-5 seconds
-    Cue: Generic analytics chart, 1-5 seconds
-    Audio: Notification chime at 4 seconds
-  Exports: GIF, WebM, .kineti
-```
-
-## Planned architecture
-
-```mermaid
-flowchart LR
-  A[Character and asset library] --> B[Canvas and timeline]
-  C[Images, video, audio, Figma, website references] --> A
-  D[Motion presets and task cues] --> B
-  B --> E[Live preview]
-  B --> F[Export renderer]
-  F --> G[PNG SVG GIF MP4 WebM]
-  F --> H[.kineti project and code]
-  F --> I[Pet sprite sheet]
-  J[Local MCP server and CLI] --> B
-  J --> F
-```
-
-| Layer | Proposed technology |
-| --- | --- |
-| Shared interface | React and TypeScript |
-| Desktop application | Tauri |
-| Browser application | Progressive Web App |
-| Scene rendering | WebGL/Canvas with SVG layer support |
-| Timeline | Portable JSON scene model |
-| Media renderer | Remotion-compatible renderer with desktop FFmpeg export |
-| Local storage | SQLite on desktop and IndexedDB in the browser |
-| Agent connection | Local MCP server and CLI |
-
-## Repository layout
-
-```text
-.
-├── README.md                     # This overview
-├── KINETICANVAS_PRD.md           # Complete product requirements document
-├── CONTRIBUTING.md               # Contributor workflow and standards
-├── AGENTS.md                     # Local agent guardrails and project commands
-├── .gitignore                    # Local and generated-file exclusions
-├── examples/                     # Portable project examples
-├── packages/core/                # Tested project-model foundation
-├── docs/
-│   ├── ARCHITECTURE.md            # Technical boundaries and project model
-│   ├── ASSET_LIBRARY.md           # Reusable character-asset contract
-│   ├── DESIGN_BRIEF.md            # Editor layout and visual direction
-│   ├── MCP_AND_SKILLS.md          # Agent integration plan
-│   ├── ROADMAP.md                 # Ordered delivery milestones
-│   └── TEST_PLAN.md               # Test coverage and acceptance checks
-└── Kipi-pet-run/                  # Existing concept work and pet pipeline artifacts
-```
-
-## Setup
-
-Clone the repository and install the workspace dependencies:
-
+### 1. Install Dependencies
 ```bash
 git clone https://github.com/Vishwajeetsrk/KinetiCanvas.git
 cd KinetiCanvas
 pnpm install
 ```
 
-Run the current studio shell:
-
+### 2. Launch KinetiCanvas Studio
 ```bash
 pnpm --filter @kineticanvas/studio dev
 ```
+Open **[http://127.0.0.1:4173/](http://127.0.0.1:4173/)** in your browser.
 
-Follow the [interactive demo guide](docs/STUDIO_DEMO.md) to select characters, change motions, add task cues and keyframes, toggle a demo audio track, and download the local editable project state.
+- Select any of the 6 companions to view their powers and working styles.
+- Switch motions: **Walk**, **Think**, **Work**, **Review**, **Sleep**.
+- Add task cues: **Analytics**, **Browser**, **Design**, **Music**, **Terminal**, **Doc**.
+- Adjust **Transform** sliders (Position X/Y, Scale, Rotation) in real time.
+- Click **Export Everywhere ▾** to export PNG, SVG, WebM video, React code, or `.kineti` project JSON.
 
-Verify the portable project model and the production studio build:
-
+### 3. Run Automated Tests
 ```bash
 pnpm test
 pnpm check
-pnpm --filter @kineticanvas/studio build
+```
+Runs the full automated test suite across `@kineticanvas/core`, `@kineticanvas/mcp`, and `@kineticanvas/cli`.
+
+---
+
+## Command Line Interface (`kineti`)
+
+Manage and validate projects directly from your terminal:
+
+```bash
+# List all 6 companions and their individual powers
+pnpm cli list
+
+# Create a new local .kineti project
+pnpm cli new "My Animation Scene"
+
+# Validate a project file
+pnpm cli validate "my-animation-scene.kineti.json"
 ```
 
-Start with [the PRD](KINETICANVAS_PRD.md), [the brand reference](docs/BRAND_REFERENCE.md), and [the roadmap](docs/ROADMAP.md) for the implementation sequence.
+---
 
-### Planned desktop development prerequisites
+## Local MCP Server (`@kineticanvas/mcp`)
 
-Once the application scaffold is added, contributors will need:
+KinetiCanvas includes a Model Context Protocol (MCP) server so AI agents such as **Google Antigravity**, **Claude Code**, and **Codex** can direct scenes programmatically:
 
-- A current Node.js LTS release and a package manager such as pnpm.
-- Rust tooling for the Tauri desktop application.
-- Platform-specific desktop build dependencies required by Tauri.
-- FFmpeg for full local video export verification.
+```bash
+pnpm mcp
+```
 
-The desktop scaffold and installers are not in this repository yet. The browser studio above is the current runnable surface.
+### Available Tools:
+- `kineticanvas_list_characters`: Returns all 6 companions with archetypes, powers, and visual specs.
+- `kineticanvas_get_character`: Fetches deep character profile, powers, and audio specs.
+- `kineticanvas_create_project`: Initializes a `.kineti` project manifest.
+- `kineticanvas_add_scene`: Appends a timeline scene.
+- `kineticanvas_add_task_cue`: Attaches task cues (analytics, browser, design, music, terminal, doc).
 
-## Releases and installers
+---
 
-There are currently **no published GitHub Releases** because KinetiCanvas does not yet produce verified Windows, macOS, or Linux installers. A release will be created only after the desktop application, local MCP server, CLI, and platform installation tests are complete. See the [studio demo guide](docs/STUDIO_DEMO.md#release-and-installer-rule) for the planned release contents.
+## GitHub Releases & Multi-Platform Packaging
 
-## Agent integration example
+The repository includes a GitHub Actions release pipeline (`.github/workflows/release.yml`).
 
-KinetiCanvas will expose local tools for additive scene work, preview, validation, and export. The final MCP tool names are documented in [MCP and skills](docs/MCP_AND_SKILLS.md).
+To trigger an official release with multi-platform packages (Web bundle, CLI, MCP tools, and Checksums):
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The workflow will run verification tests, build the studio production bundle, generate SHA256 checksums, and publish the release to GitHub automatically under [Releases](https://github.com/Vishwajeetsrk/KinetiCanvas/releases).
+
+---
+
+## Repository Structure
 
 ```text
-open_project("/projects/friday-update.kineti")
-add_motion(character="olli", preset="analyze", start=0, duration=5)
-add_task_cue(type="analytics", start=1, duration=4)
-add_audio(asset="notification-chime", at=4)
-render_preview()
+.
+├── .github/workflows/release.yml # Multi-platform automated release workflow
+├── apps/
+│   └── studio/                   # React/Vite interactive studio editor
+│       ├── src/components/       # High-fidelity SVG companion avatars & animators
+│       ├── src/audio/            # Web Audio procedural synthesizer engine
+│       ├── src/export/           # PNG, SVG, WebM, and React code export engine
+│       └── src/main.jsx          # Main studio workspace & timeline interface
+├── packages/
+│   ├── core/                     # Tested project model & companion catalog
+│   ├── mcp/                      # Local Model Context Protocol (MCP) server
+│   └── cli/                      # Command-line interface (`kineti`)
+├── docs/
+│   ├── STUDIO_DEMO.md            # Interactive walkthrough guide
+│   ├── ARCHITECTURE.md           # Architecture specifications
+│   ├── BRAND_REFERENCE.md        # Ember & companion visual criteria
+│   └── ROADMAP.md                # Product milestones
+└── Kipi-pet-run/                 # Original six-character reference artwork
 ```
 
-The agent returns a preview for editing before a final export. It may not access arbitrary folders, overwrite files, or invoke remote services without explicit user approval.
+## Local-First Privacy Guarantee
 
-## Local-first privacy
-
-- No account is required for the initial release.
-- Projects and assets save locally by default.
-- API keys and credentials are never stored inside `.kineti` project packages.
-- Remote generation and external imports are opt-in.
-- MCP listens locally only after the user enables it.
-
-## Documentation
-
-- [Product requirements](KINETICANVAS_PRD.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Reusable asset library](docs/ASSET_LIBRARY.md)
-- [Editor design brief](docs/DESIGN_BRIEF.md)
-- [MCP and skills](docs/MCP_AND_SKILLS.md)
-- [Roadmap](docs/ROADMAP.md)
-- [Test plan](docs/TEST_PLAN.md)
-- [Contributing](CONTRIBUTING.md)
+- 100% offline-first execution with local file storage.
+- No mandatory accounts, telemetry, or remote API requirements.
+- Safe, non-destructive file operations.
 
 ## License
 
-The license will be chosen before application source code is released. Until then, all concept artwork and repository content remain reserved to their respective owners and contributors.
+Reserved to contributors. All character designs and concept artwork are protected.

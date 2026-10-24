@@ -216,3 +216,5 @@ export function validateProject(project) {
 
   return { valid: errors.length === 0, errors };
 }
+
+export { CHARACTERS, getCharacterById, listCharacterIds } from "./characters.js";

@@ -185,7 +185,19 @@ importers:
         specifier: ^7.1.7
         version: 7.3.7
 
+  packages/cli:
+    dependencies:
+      '@kineticanvas/core':
+        specifier: workspace:*
+        version: link:../core
+
   packages/core: {}
+
+  packages/mcp:
+    dependencies:
+      '@kineticanvas/core':
+        specifier: workspace:*
+        version: link:../core
 
 packages:
 
