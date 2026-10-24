@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "project": {
+    "name": "kineticanvas",
+    "productType": "local-first character animation studio",
+    "stack": ["React", "Vite", "Tauri-ready workspace"]
+  },
+  "sources": {
+    "tokens": [],
+    "components": [],
+    "assets": [],
+    "instructions": [
+      "AGENTS.md"
+    ]
+  },
+  "design": {
+    "colorMode": "dark",
+    "colors": {
+      "canvas": "#0e1924",
+      "surface": "#142635",
+      "surfaceRaised": "#1b3344",
+      "text": "#f4fbfa",
+      "muted": "#91a9b5",
+      "accent": "#27d1c4",
+      "accentWarm": "#ff947c"
+    },
+    "typography": { "font": "Inter, system-ui, sans-serif" },
+    "spacing": { "base": 8 },
+    "radius": { "panel": 16, "control": 10 },
+    "shadows": { "panel": "0 18px 44px rgba(0, 0, 0, .22)" },
+    "motion": { "reducedMotion": "required" },
+    "density": "balanced"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Keep live preview visually central.",
+      "Preserve keyboard focus and reduced-motion behavior.",
+      "Use clear labels for every icon action."
+    ],
+    "avoid": [
+      "Decorative gradients that obscure editing controls.",
+      "Dense card grids that compete with the canvas."
+    ]
+  },
+  "decisions": [
+    "Use a balanced professional creative-studio layout with dark slate surfaces and teal/coral accents.",
+    "Build the first editor screen around the Friday analytics update example."
+  ],
+  "evidence": [
+    {
+      "fact": "project.instructions",
+      "source": "AGENTS.md"
+    }
+  ],
+  "generatedAt": "2026-10-24T11:16:32.477Z"
+}
