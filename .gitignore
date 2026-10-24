@@ -1,0 +1,54 @@
+# Dependencies and package-manager files
+node_modules/
+.pnp.*
+
+# Build output and bundles
+dist/
+build/
+out/
+.next/
+.vite/
+coverage/
+playwright-report/
+test-results/
+
+# Tauri and Rust build output
+src-tauri/target/
+target/
+
+# Local project and preview data
+.kineticache/
+.kineti-work/
+*.kineti.tmp
+*.kineti.lock
+exports/
+rendered/
+previews/
+
+# Generated media and binary assets
+*.mp4
+*.webm
+*.mov
+*.gif
+*.wav
+*.mp3
+*.m4a
+*.ogg
+Kipi-pet-run/*
+!Kipi-pet-run/six-character-task-and-sound-reference.png
+
+# Secrets and local environment settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

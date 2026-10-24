@@ -1,0 +1,15 @@
+{
+  "name": "kineticanvas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first character animation studio for web and desktop.",
+  "type": "module",
+  "packageManager": "pnpm@12.10.1",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "check": "pnpm test",
+    "test": "node --test packages/core/test/*.test.js"
+  }
+}

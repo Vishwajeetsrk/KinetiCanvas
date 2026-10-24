@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "project-friday-analytics-update",
+  "title": "Friday analytics update",
+  "createdAt": "2026-10-24T00:00:00.000Z",
+  "updatedAt": "2026-10-24T00:00:00.000Z",
+  "assets": [],
+  "exports": [
+    { "format": "gif", "transparent": true },
+    { "format": "webm", "audio": true },
+    { "format": "project" }
+  ],
+  "scenes": [
+    {
+      "id": "scene-analytics",
+      "name": "Analytics update",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "duration": 5,
+      "layers": [
+        {
+          "id": "layer-olli",
+          "type": "character",
+          "characterId": "olli",
+          "motion": "analyze"
+        }
+      ],
+      "cues": [
+        {
+          "id": "cue-analytics",
+          "type": "analytics",
+          "label": "Reviewing analytics",
+          "start": 1,
+          "duration": 4,
+          "source": "built-in"
+        }
+      ],
+      "audio": [
+        {
+          "id": "audio-chime",
+          "assetId": "notification-chime",
+          "start": 4,
+          "volume": 0.7
+        }
+      ]
+    }
+  ]
+}
