@@ -4,7 +4,7 @@
 
 KinetiCanvas is a local-first character animation studio for the web and desktop. Create an original mascot from references, animate it with editable motion presets, add task cues and sound, preview every change, and export reusable media or code.
 
-> **Project status:** Foundation and product planning. This repository contains the product specification, architecture plan, asset rules, test plan, and contributor setup. The application packages are the next milestone.
+> **Project status:** Foundation and first interactive studio shell. The repository contains the product specification, portable project-model package, starter editor interface, Ember brand reference, asset rules, test plan, and contributor setup. Rendering, editable character packages, export, MCP/CLI, and desktop installers remain planned milestones.
 
 ![KinetiCanvas six-character concept reference](Kipi-pet-run/six-character-task-and-sound-reference.png)
 
@@ -114,18 +114,31 @@ flowchart LR
 
 ## Setup
 
-### Documentation-only repository today
-
-Clone the repository and read the product plan:
+Clone the repository and install the workspace dependencies:
 
 ```bash
 git clone https://github.com/Vishwajeetsrk/KinetiCanvas.git
 cd KinetiCanvas
+pnpm install
 ```
 
-Start with [the PRD](KINETICANVAS_PRD.md), then use [the roadmap](docs/ROADMAP.md) to select an implementation milestone.
+Run the current studio shell:
 
-### Planned development prerequisites
+```bash
+pnpm --filter @kineticanvas/studio dev
+```
+
+Verify the portable project model and the production studio build:
+
+```bash
+pnpm test
+pnpm check
+pnpm --filter @kineticanvas/studio build
+```
+
+Start with [the PRD](KINETICANVAS_PRD.md), [the brand reference](docs/BRAND_REFERENCE.md), and [the roadmap](docs/ROADMAP.md) for the implementation sequence.
+
+### Planned desktop development prerequisites
 
 Once the application scaffold is added, contributors will need:
 
@@ -134,7 +147,7 @@ Once the application scaffold is added, contributors will need:
 - Platform-specific desktop build dependencies required by Tauri.
 - FFmpeg for full local video export verification.
 
-The first code milestone will add exact package versions and executable commands. Do not expect `npm run dev` or `pnpm dev` to work until that scaffold lands.
+The desktop scaffold and installers are not in this repository yet. The browser studio above is the current runnable surface.
 
 ## Agent integration example
 

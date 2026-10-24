@@ -1,30 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">Ember, the KinetiCanvas dragon builder</title>
-  <desc id="desc">A teal baby dragon with coral wings and horns on a dark navy rounded square.</desc>
-  <defs>
-    <linearGradient id="background" x1="24" y1="18" x2="232" y2="240" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#163E57"/>
-      <stop offset="1" stop-color="#092234"/>
-    </linearGradient>
-    <linearGradient id="dragon" x1="77" y1="57" x2="181" y2="209" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#58E2D6"/>
-      <stop offset="1" stop-color="#1DAFAF"/>
-    </linearGradient>
-  </defs>
-  <rect width="256" height="256" rx="62" fill="url(#background)"/>
-  <path d="M35 161c-3-38 17-71 49-82l15 36-24 51-31 12c-5-5-8-11-9-17Z" fill="#FF947C" stroke="#FFF7E9" stroke-linejoin="round" stroke-width="8"/>
-  <path d="M221 161c3-38-17-71-49-82l-15 36 24 51 31 12c5-5 8-11 9-17Z" fill="#FF947C" stroke="#FFF7E9" stroke-linejoin="round" stroke-width="8"/>
-  <path d="M81 85 93 42l24 36M175 85l-12-43-24 36" fill="#F9EDD6" stroke="#FFF7E9" stroke-linejoin="round" stroke-width="8"/>
-  <path d="M78 114c0-40 22-69 50-69s50 29 50 69v13c0 53-21 81-50 81s-50-28-50-81v-13Z" fill="url(#dragon)" stroke="#FFF7E9" stroke-width="9"/>
-  <path d="M111 59c4-16 15-25 17-28 2 3 13 12 17 28l-17 14-17-14Z" fill="#FF947C" stroke="#FFF7E9" stroke-linejoin="round" stroke-width="7"/>
-  <path d="M83 100 59 82l12 39M173 100l24-18-12 39" fill="#35C8C1" stroke="#FFF7E9" stroke-linejoin="round" stroke-width="8"/>
-  <ellipse cx="103" cy="123" rx="23" ry="27" fill="#102B40" stroke="#FFF7E9" stroke-width="6"/>
-  <ellipse cx="153" cy="123" rx="23" ry="27" fill="#102B40" stroke="#FFF7E9" stroke-width="6"/>
-  <circle cx="96" cy="114" r="7" fill="#FFF"/>
-  <circle cx="146" cy="114" r="7" fill="#FFF"/>
-  <path d="M105 160c12 13 34 13 46 0" fill="none" stroke="#102B40" stroke-linecap="round" stroke-width="10"/>
-  <path d="M116 151c7 5 17 5 24 0" fill="#FF947C" stroke="#102B40" stroke-linejoin="round" stroke-width="6"/>
-  <circle cx="84" cy="155" r="11" fill="#FF947C" opacity=".9"/>
-  <circle cx="172" cy="155" r="11" fill="#FF947C" opacity=".9"/>
-  <path d="M96 192c16 11 48 11 64 0v25H96v-25Z" fill="#FF947C" stroke="#FFF7E9" stroke-linejoin="round" stroke-width="8"/>
+  <desc id="desc">Compatibility wrapper for the canonical Ember PNG brand asset.</desc>
+  <image href="/ember-builder.png" width="512" height="512" preserveAspectRatio="xMidYMid meet" />
 </svg>
