@@ -1,82 +1,99 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { ArrowRight, Check, Code, Download, Sparkles } from "lucide-react";
 import { downloadPng, downloadSvg, reactSnippet } from "../export/exporters.js";
 
 export const PLUSH_PALS = [
   {
     id: "pomo",
-    name: "Pomo (Blob)",
-    role: "Thinking",
-    url: "/assets/characters/pomo-hd.jpg",
-    powers: "Mind Bubble Matrix · Zen Focus",
+    name: "Pomo",
+    species: "Sprout Blob",
+    role: "Organizer & Thinker",
+    powers: "Mind Bubble Matrix / Zen Focus",
+    src: "/assets/characters/pomo-hd.jpg",
+    bg: "#eef8f6",
   },
   {
     id: "fynn",
-    name: "Fynn (Fox)",
-    role: "Creating",
-    url: "/assets/characters/fynn-hd.jpg",
-    powers: "Chromatic Realization · Vector Transmutation",
+    name: "Fynn",
+    species: "Plush Fox",
+    role: "Designer & Painter",
+    powers: "Chromatic Realization / Vector Transmutation",
+    src: "/assets/characters/fynn-hd.jpg",
+    bg: "#fdf8ee",
   },
   {
     id: "olli",
-    name: "Olli (Owl)",
-    role: "Analyzing",
-    url: "/assets/characters/olli-hd.jpg",
-    powers: "Predictive Telemetry · 3D Multi-Metric",
+    name: "Olli",
+    species: "Feathered Owl",
+    role: "Analyst & Strategist",
+    powers: "Predictive Telemetry / 3D Multi-Metric",
+    src: "/assets/characters/olli-hd.jpg",
+    bg: "#edf7f9",
   },
   {
     id: "nixi",
-    name: "Nixi (Axolotl)",
-    role: "Browsing",
-    url: "/assets/characters/nixi-hd.jpg",
-    powers: "Web Teleportation · API Deep-Diving",
+    name: "Nixi",
+    species: "Coral-Gilled Axolotl",
+    role: "Explorer & Systems",
+    powers: "Web Teleportation / API Deep-Diving",
+    src: "/assets/characters/nixi-hd.jpg",
+    bg: "#f3f8f9",
   },
   {
     id: "ember",
-    name: "Ember (Dragon)",
-    role: "Coding",
-    url: "/assets/characters/ember-hd.jpg",
-    powers: "Code Ignition · Harmonic Audio Synthesis",
+    name: "Ember",
+    species: "Teal Baby Dragon",
+    role: "Builder & Architect",
+    powers: "Code Ignition / Harmonic Audio Synthesis",
+    src: "/assets/characters/ember-hd.jpg",
+    bg: "#edf8f7",
   },
   {
     id: "kipi",
-    name: "Kipi (Maker Bunny)",
-    role: "Listening",
-    url: "/assets/characters/kipi-hd.jpg",
-    powers: "Agent Telepathy · Equalizer Balancing",
+    name: "Kipi",
+    species: "Cosmic Plush Maker",
+    role: "Maker & Orchestrator",
+    powers: "Agent Telepathy / Equalizer Balancing",
+    src: "/assets/characters/kipi-hd.jpg",
+    bg: "#edf8f7",
   },
 ];
 
-export function CharacterGalleryCard({ pal, onSelectForStudio }) {
+function PalCard({ pal, onSelectForStudio }) {
   const [busy, setBusy] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  const run = async (kind) => {
-    setBusy(kind);
+  async function run(type) {
+    setBusy(type);
     try {
-      await (kind === "png" ? downloadPng(pal) : downloadSvg(pal));
-    } catch {
-      window.open(pal.url, "_blank");
+      if (type === "png") await downloadPng(pal.id);
+      if (type === "svg") await downloadSvg(pal.id);
     } finally {
       setBusy(null);
     }
-  };
+  }
 
-  const copy = async () => {
-    await navigator.clipboard.writeText(reactSnippet(pal));
+  async function copy() {
+    await navigator.clipboard.writeText(reactSnippet(pal.id));
     setCopied(true);
-    setTimeout(() => setCopied(false), 1400);
-  };
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <article className="pal-card">
-      <div className="pal-image-wrapper">
-        <img src={pal.url} alt={pal.name} className="pal-image" loading="lazy" />
-        <span className="pal-badge">{pal.role}</span>
+      <div className="pal-image-wrap" style={{ background: pal.bg }}>
+        <img
+          src={pal.src}
+          alt={pal.name}
+          className="pal-image"
+          loading="lazy"
+        />
+        <span className="pal-tag">{pal.species}</span>
       </div>
 
       <div className="pal-info">
-        <div className="pal-header">
-          <h3>{pal.name}</h3>
+        <div className="pal-header-line">
+          <h3 className="pal-title">{pal.name}</h3>
           <span className="pal-role">{pal.role}</span>
         </div>
         <p className="pal-powers">{pal.powers}</p>
@@ -85,32 +102,33 @@ export function CharacterGalleryCard({ pal, onSelectForStudio }) {
       <div className="pal-action-grid">
         <button
           onClick={() => run("png")}
-          className="pal-btn pal-btn-primary"
+          className="pal-btn pal-btn-primary inline-flex items-center justify-center gap-1.5"
           title="Download 1024x1024 lossless PNG"
         >
-          {busy === "png" ? "…" : "⬇ PNG"}
+          <Download size={13} /> {busy === "png" ? "Saving..." : "PNG"}
         </button>
         <button
           onClick={() => run("svg")}
-          className="pal-btn"
+          className="pal-btn inline-flex items-center justify-center gap-1.5"
           title="Download vector SVG with embedded image"
         >
-          {busy === "svg" ? "…" : "⬇ SVG"}
+          <Download size={13} /> {busy === "svg" ? "Saving..." : "SVG"}
         </button>
         <button
           onClick={copy}
-          className="pal-btn"
+          className="pal-btn inline-flex items-center justify-center gap-1.5"
           title="Copy React JSX component snippet"
         >
-          {copied ? "✓ Copied" : "📋 Code"}
+          {copied ? <Check size={13} className="text-teal" /> : <Code size={13} />}
+          <span>{copied ? "Copied" : "Code"}</span>
         </button>
       </div>
 
       <button
         onClick={() => onSelectForStudio(pal.id)}
-        className="pal-animate-btn"
+        className="pal-animate-btn inline-flex items-center justify-center gap-2"
       >
-        ✨ Direct & Animate in Canvas Studio →
+        <Sparkles size={14} /> Direct & Animate in Studio <ArrowRight size={14} />
       </button>
     </article>
   );
@@ -127,7 +145,7 @@ export function PlushPalsGallery({ onSelectCharacter, onClose }) {
           </p>
         </div>
         <div className="gallery-meta">
-          <span>6 characters · 1024 × 1024</span>
+          <span>6 characters / 1024 x 1024</span>
           {onClose && (
             <button className="primary-button" onClick={onClose} style={{ marginLeft: 16 }}>
               Back to Studio Editor
@@ -138,13 +156,10 @@ export function PlushPalsGallery({ onSelectCharacter, onClose }) {
 
       <main className="gallery-grid">
         {PLUSH_PALS.map((pal) => (
-          <CharacterGalleryCard
+          <PalCard
             key={pal.id}
             pal={pal}
-            onSelectForStudio={(id) => {
-              onSelectCharacter(id);
-              if (onClose) onClose();
-            }}
+            onSelectForStudio={(id) => onSelectCharacter?.(id)}
           />
         ))}
       </main>

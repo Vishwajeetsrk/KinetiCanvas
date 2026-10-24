@@ -1,6 +1,7 @@
 import type { CharacterId } from "./characters";
 import type { MotionId } from "./motion";
 import type { CueId } from "./cues";
+import type { ItemId } from "./engine/types";
 
 export type Scene = {
   version: 1;
@@ -13,6 +14,9 @@ export type Scene = {
   duration: number;
   cue: { type: CueId; start: number; end: number; x: number; y: number };
   audio: { enabled: boolean; asset: "notification-chime"; at: number; volume: number };
+  music: { enabled: boolean; volume: number; bpm: number };
+  speech: { enabled: boolean; text: string; at: number };
+  items: ItemId[];
 };
 
 export const defaultScene: Scene = {
@@ -26,6 +30,9 @@ export const defaultScene: Scene = {
   duration: 5,
   cue: { type: "analytics", start: 1, end: 5, x: 790, y: 210 },
   audio: { enabled: true, asset: "notification-chime", at: 4, volume: 0.6 },
+  music: { enabled: false, volume: 0.35, bpm: 90 },
+  speech: { enabled: true, text: "Reviewing metrics now!", at: 1.2 },
+  items: ["glasses"],
 };
 
 export const fmt = (t: number) => {

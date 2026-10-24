@@ -1,4 +1,5 @@
 import { useRef, type ReactNode, type PointerEvent } from "react";
+import { MessageSquare, Music, Volume2 } from "lucide-react";
 import { characterById } from "./characters";
 import { motions } from "./motion";
 import { cues } from "./cues";
@@ -46,7 +47,7 @@ export function Timeline({ scene, time, update, onSeek }: Props) {
   const motionLabel = motions.find((m) => m.id === scene.motion)?.label;
 
   return (
-    <footer className="h-[164px] shrink-0 border-t border-line bg-panel flex flex-col select-none" aria-label="Timeline editor">
+    <footer className="h-[174px] shrink-0 border-t border-line bg-panel flex flex-col select-none" aria-label="Timeline editor">
       <div className="flex h-7 border-b border-line">
         <div style={{ width: LABEL_W }} className="shrink-0 px-4 flex items-center text-xs font-semibold">Timeline</div>
         <div ref={lane} onPointerDown={scrub} className="relative flex-1 mr-4 cursor-col-resize">
@@ -59,13 +60,14 @@ export function Timeline({ scene, time, update, onSeek }: Props) {
         </div>
       </div>
 
-      <div className="relative flex-1">
+      <div className="relative flex-1 flex flex-col">
         <Track label="Character" sub={characterById(scene.characterId).name}>
           <Block start={0} end={D} D={D} className="bg-teal text-white">
-            {motionLabel} · 0–{D}s
+            {motionLabel} [0-{D}s]
           </Block>
         </Track>
-        <Track label="Task cue" sub={scene.cue.type === "none" ? "None" : cueLabel}>
+
+        <Track label="Task Cue" sub={scene.cue.type === "none" ? "None" : cueLabel}>
           {scene.cue.type !== "none" && (
             <Block
               start={scene.cue.start}
@@ -80,11 +82,15 @@ export function Timeline({ scene, time, update, onSeek }: Props) {
                 });
               }}
             >
-              {cueLabel} · {scene.cue.start.toFixed(1)}–{scene.cue.end.toFixed(1)}s
+              {cueLabel} [{scene.cue.start.toFixed(1)}-{scene.cue.end.toFixed(1)}s]
             </Block>
           )}
         </Track>
-        <Track label="Audio" sub={scene.audio.enabled ? "Chime" : "Muted"}>
+
+        <Track
+          label="Audio & Voice"
+          sub={scene.music?.enabled ? "Ambient Music Active" : scene.audio.enabled ? "Chime" : "Muted"}
+        >
           {scene.audio.enabled && (
             <button
               aria-label="Move chime"
@@ -92,11 +98,31 @@ export function Timeline({ scene, time, update, onSeek }: Props) {
                 const a0 = scene.audio.at;
                 drag(e, (dt) => update({ audio: { ...scene.audio, at: +Math.max(0, Math.min(D - 0.2, a0 + dt)).toFixed(1) } }));
               }}
-              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 px-2 rounded-md bg-gold/15 text-[11px] text-[#7a5a18] ring-1 ring-gold/40 whitespace-nowrap cursor-grab active:cursor-grabbing"
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 px-2 rounded-md bg-gold/15 text-[11px] text-[#7a5a18] ring-1 ring-gold/40 whitespace-nowrap cursor-grab active:cursor-grabbing inline-flex items-center gap-1 shadow-xs"
               style={{ left: pct(scene.audio.at) }}
             >
-              ♪ {scene.audio.at.toFixed(1)}s
+              <Volume2 size={12} /> {scene.audio.at.toFixed(1)}s
             </button>
+          )}
+          {scene.speech?.enabled && (
+            <button
+              aria-label="Move companion speech"
+              onPointerDown={(e) => {
+                const s0 = scene.speech.at;
+                drag(e, (dt) => update({ speech: { ...scene.speech, at: +Math.max(0, Math.min(D - 0.5, s0 + dt)).toFixed(1) } }));
+              }}
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 px-2 rounded-md bg-teal-soft text-[11px] text-[#1f7f79] ring-1 ring-teal/40 whitespace-nowrap cursor-grab active:cursor-grabbing inline-flex items-center gap-1 shadow-xs"
+              style={{ left: pct(scene.speech.at) }}
+            >
+              <MessageSquare size={12} /> Talk {scene.speech.at.toFixed(1)}s
+            </button>
+          )}
+          {scene.music?.enabled && (
+            <div
+              className="absolute top-1/2 -translate-y-1/2 right-2 h-5 px-1.5 rounded bg-emerald-50 text-[10px] text-emerald-700 ring-1 ring-emerald-200 inline-flex items-center gap-1"
+            >
+              <Music size={11} /> Lo-Fi
+            </div>
           )}
         </Track>
 
@@ -113,10 +139,10 @@ export function Timeline({ scene, time, update, onSeek }: Props) {
 
 function Track({ label, sub, children }: { label: string; sub?: string; children: ReactNode }) {
   return (
-    <div className="flex h-1/3 border-b border-line/60 last:border-0">
+    <div className="flex flex-1 border-b border-line/60 last:border-0 min-h-[36px]">
       <div style={{ width: LABEL_W }} className="shrink-0 px-4 flex flex-col justify-center">
         <span className="text-xs font-medium leading-tight">{label}</span>
-        <span className="text-[11px] text-faint leading-tight">{sub}</span>
+        <span className="text-[11px] text-faint leading-tight truncate">{sub}</span>
       </div>
       <div className="relative flex-1 mr-4">{children}</div>
     </div>

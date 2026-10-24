@@ -20,7 +20,7 @@ export function Stage({ scene, time, images, playing, onTogglePlay }: Props) {
   }, [scene, time, images]);
 
   return (
-    <section className="min-h-0 min-w-0 flex flex-col" aria-label="Animation stage">
+    <section className="min-h-0 min-w-0 flex flex-col bg-shell" aria-label="Animation stage">
       <div className="flex-1 min-h-0 flex items-center justify-center p-6">
         <div className="relative h-full aspect-square max-w-full">
           <canvas
@@ -30,10 +30,12 @@ export function Stage({ scene, time, images, playing, onTogglePlay }: Props) {
             className="w-full h-full rounded-2xl bg-white shadow-[0_1px_0_rgba(28,43,43,0.04),0_8px_30px_-16px_rgba(28,43,43,0.25)]"
           />
           {!images.chars[scene.characterId] && (
-            <div className="absolute inset-0 grid place-items-center text-sm text-muted">Loading {ch.name}…</div>
+            <div className="absolute inset-0 grid place-items-center text-sm text-muted">
+              Loading {ch.name}...
+            </div>
           )}
-          <div className="absolute left-4 top-4 rounded-md bg-white/90 px-2 py-1 text-xs text-muted backdrop-blur-sm shadow-sm">
-            {ch.name} · {motions.find((m) => m.id === scene.motion)?.label}
+          <div className="absolute left-4 top-4 rounded-md bg-white/95 px-2.5 py-1 text-xs text-muted backdrop-blur-sm shadow-xs border border-line">
+            <span className="font-semibold text-ink">{ch.name}</span> / {motions.find((m) => m.id === scene.motion)?.label}
           </div>
         </div>
       </div>

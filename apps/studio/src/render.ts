@@ -1,6 +1,7 @@
 import { pose } from "./motion";
 import type { Scene } from "./scene";
 import type { ImageBank } from "./useCharacterImages";
+import { itemDefinitions } from "./items";
 
 export const SCENE = 1024;
 const FEET_Y = 968;
@@ -54,6 +55,22 @@ export function drawFrame(ctx: CanvasRenderingContext2D, px: number, scene: Scen
     ctx.restore();
   }
 
+  // Draw equipped vector items / accessories (rendered on top of character with motion sync)
+  if (scene.items && scene.items.length > 0) {
+    ctx.save();
+    ctx.translate(tr.feetX, tr.feetY);
+    ctx.rotate((tr.rotate * Math.PI) / 180);
+    ctx.scale(tr.scaleX, tr.scaleY);
+    scene.items.forEach((itemId) => {
+      const def = itemDefinitions[itemId];
+      if (def) {
+        def.draw(ctx, tr.size);
+      }
+    });
+    ctx.restore();
+  }
+
+  // Draw Task Cue
   const cs = cueState(scene, t);
   const cueImg = bank.cues[scene.cue.type];
   if (cs && cueImg) {
@@ -63,6 +80,63 @@ export function drawFrame(ctx: CanvasRenderingContext2D, px: number, scene: Scen
     ctx.scale(cs.scale, cs.scale);
     ctx.drawImage(cueImg, -CUE_SIZE / 2, -CUE_SIZE / 2, CUE_SIZE, CUE_SIZE);
     ctx.restore();
+  }
+
+  // Draw Speech Bubble (if speech active)
+  if (scene.speech?.enabled && scene.speech.text) {
+    const speechStart = scene.speech.at;
+    const speechDuration = 2.8;
+    if (t >= speechStart && t <= speechStart + speechDuration) {
+      const speechProg = (t - speechStart) / speechDuration;
+      const alpha = Math.min(1, Math.min(speechProg / 0.15, (1 - speechProg) / 0.15));
+      const bubbleX = Math.min(840, Math.max(180, tr.feetX));
+      const bubbleY = tr.feetY - tr.size * 0.88 + Math.sin(t * 3) * 4;
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+      ctx.font = "600 24px Inter, system-ui, sans-serif";
+      const textMetrics = ctx.measureText(scene.speech.text);
+      const padding = 20;
+      const bw = textMetrics.width + padding * 2;
+      const bh = 54;
+
+      // Bubble shadow
+      ctx.fillStyle = "rgba(28, 43, 43, 0.08)";
+      ctx.beginPath();
+      ctx.roundRect(bubbleX - bw / 2, bubbleY - bh + 4, bw, bh, 18);
+      ctx.fill();
+
+      // Bubble background
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "#e3dfd8";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(bubbleX - bw / 2, bubbleY - bh, bw, bh, 18);
+      ctx.fill();
+      ctx.stroke();
+
+      // Pointer tail
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.moveTo(bubbleX - 10, bubbleY);
+      ctx.lineTo(bubbleX, bubbleY + 12);
+      ctx.lineTo(bubbleX + 10, bubbleY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = "#e3dfd8";
+      ctx.beginPath();
+      ctx.moveTo(bubbleX - 10, bubbleY);
+      ctx.lineTo(bubbleX, bubbleY + 12);
+      ctx.lineTo(bubbleX + 10, bubbleY);
+      ctx.stroke();
+
+      // Text
+      ctx.fillStyle = "#1c2b2b";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(scene.speech.text, bubbleX, bubbleY - bh / 2);
+      ctx.restore();
+    }
   }
 }
 
